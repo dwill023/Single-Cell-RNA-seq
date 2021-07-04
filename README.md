@@ -40,7 +40,10 @@ The [cellranger](https://support.10xgenomics.com/single-cell-gene-expression/sof
 	
 The output of the above is a UMI count matrix. The values in this matrix represent the number of molecules for each feature (i.e. gene; row) that are detected in each cell (column). This file is used with the [Seurat R library](https://satijalab.org/seurat/archive/v3.2/pbmc3k_tutorial.html) to select and filter cells based on QC metrics, data normalization & scaling, and the detection of highly variable features. 
 
-<span style="color:blue">Below are the steps to analyze the data starting with fastq files.</span>.
-<font color='red'>test blue color font</font>
-
-
+```diff
+- text in red
++ text in green
+! text in orange
+# text in gray
+@@ text in purple (and bold)@@
+```
