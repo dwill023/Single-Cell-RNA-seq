@@ -46,11 +46,11 @@ The output of the above is a UMI count matrix. The values in this matrix represe
 
 # Read quality assessment
 Run fastqc and MultiQC for read quality and quantitiy.
-```
+```bash
 fastqc *.fastq.gz
 ```
 
-```
+```bash
 multiqc .
 ```
 
@@ -59,7 +59,7 @@ If trimming of the low quality bases and adapters are required there are differe
 
 [Trim Galore](https://github.com/FelixKrueger/TrimGalore/blob/master/Docs/Trim_Galore_User_Guide.md), that uses Cutadapt and FastQC, which will do this and automatically generate fastQ files afterwards. It also has built in adapter auto-detection. If you want to use trim galore, Cutadapt and FastQC have to be preinstalled.
 
-```
+```bash
 # Check that cutadapt is installed
 cutadapt --version
 # Check that FastQC is installed
@@ -82,7 +82,7 @@ You must perform the count step separately for each well, see the figure above.
 
 The cellranger software requires lots of memory (64 GB) and 16 cores (CPU). Use a HPCC to run it.
 
-```
+```bash
 cellranger count --id=day1 \
 --fastqs=/scRNA_seq/d1_N2B27/ \
 --transcriptome=refdata-gex-mm10-2020-A
@@ -108,5 +108,30 @@ Summary of what each file is:
 | feature_reference.csv            | (Feature Barcode only) Feature Reference CSV file                                                                                                                  |
 | target_panel.csv                 | (Targeted GEX only) Targed panel CSV file                                                                                                                          |
 
+# Aggregating Multiple GEM Wells
+
+A CSV file must first be created with the following columns:
+- library_id: Unique identifier for this input GEM well. This will be used for labeling purposes only; it doesn't need to match any previous ID you've assigned to the GEM well.
+- molecule_h5: Path to the molecule_info.h5 file produced by `cellranger count`.
+
+| library_id | molecule_h5                                    |
+|------------|------------------------------------------------|
+| day0_naive | /scRNA_seq/d0_2iL/d0_2iL/outs/molecule_info.h5 |
+| day1_epi   | /scRNA_seq/d1_N2B27/day1/outs/molecule_info.h5 |
+| day2_epi   | /scRNA_seq/d2_N2B27/day2/outs/molecule_info.h5 |
+
+if you have different batches such as samples run with different 10X kits ( like version 2 or version 3) you can set up the above table with another column labeled "batch" and the software will perform batch correction.
+
+Run cellranger aggr without normalization (none) this is because we will use Seurat to perform the normalization and it requires un-normalized counts.
+```bash
+cellranger aggr --id=mouseNaive_epiblast \
+--csv=data.csv \
+--normalize=none
+```
+
+# Seurat
+Use the file filtered_feature_bc_matrix, generated from above step, as input into seurat. The filtered feature file is used as it contains only the detected cell barcodes without the background.
+
+Follow the steps in the RMD file: [seurat_scRNAseq.Rmd](seurat_scRNAseq.Rmd).
 
 
