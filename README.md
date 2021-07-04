@@ -132,6 +132,6 @@ cellranger aggr --id=mouseNaive_epiblast \
 # Seurat
 Use the file filtered_feature_bc_matrix, generated from above step, as input into seurat. The filtered feature file is used as it contains only the detected cell barcodes without the background.
 
-Follow the steps in the RMD file: [seurat_scRNAseq.Rmd](seurat_scRNAseq.Rmd).
+Follow the steps in the r file: seurat_scRNAseq.R and view the example with the outputs [here](https://raw.githack.com/dwill023/Single-Cell-RNA-seq/main/seurat_scRNAseq.nb.html).
 
 
