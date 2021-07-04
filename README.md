@@ -43,3 +43,70 @@ The output of the above is a UMI count matrix. The values in this matrix represe
 ```diff
 @@ Below are the steps to analyze the data starting with fastq files. @@
 ```
+
+# Read quality assessment
+Run fastqc and MultiQC for read quality and quantitiy.
+```
+fastqc *.fastq.gz
+```
+
+```
+multiqc .
+```
+
+# Trimming
+If trimming of the low quality bases and adapters are required there are different trimming tools available.
+
+[Trim Galore](https://github.com/FelixKrueger/TrimGalore/blob/master/Docs/Trim_Galore_User_Guide.md), that uses Cutadapt and FastQC, which will do this and automatically generate fastQ files afterwards. It also has built in adapter auto-detection. If you want to use trim galore, Cutadapt and FastQC have to be preinstalled.
+
+```
+# Check that cutadapt is installed
+cutadapt --version
+# Check that FastQC is installed
+fastqc -v
+# Install Trim Galore
+curl -fsSL https://github.com/FelixKrueger/TrimGalore/archive/0.6.6.tar.gz -o trim_galore.tar.gz
+tar xvzf trim_galore.tar.gz
+# Run Trim Galore
+~/TrimGalore-0.6.6/trim_galore -o fastqc_trimmed_results Sample_1.fastq Sample_2.fastq
+```
+# Demultiplexing
+This step is performed to demultiplex the UMI (12 nt unique molecular identifier) which is used to identify the single cell.
+For Smartseq2 or other paired-end full transcript protocols the data will usually already be demultiplexed.
+If the sequencing facility hasn't already demultiplexed you have to do it yourself.
+Also in the droplet-based protocol  the cell-barcode will be attached to the read name and demultiplexing will happen during the quantification step.
+
+# Cell Counting
+Most experiments will have multiple samples, processed from multiple wells of a chromium chip (8 max). Each well represents a treatment, timepoint, or condition and has its own barcode to distinguish it from the other wells. 
+You must perform the count step separately for each well, see the figure above.
+
+The cellranger software requires lots of memory (64 GB) and 16 cores (CPU). Use a HPCC to run it.
+
+```
+cellranger count --id=day1 \
+--fastqs=/scRNA_seq/d1_N2B27/ \
+--transcriptome=refdata-gex-mm10-2020-A
+```
+The output files are listed below:
+![](https://github.com/dwill023/Single-Cell-RNA-seq/blob/main/figures/output1.png)
+
+Summary of what each file is:
+
+|             File Name            |                                                                             Description                                                                            |
+|:--------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| web_summary.html                 | Run summary metrics and charts in HTML format                                                                                                                      |
+| metrics_summary.csv              | Run summary metrics in CSV format                                                                                                                                  |
+| possorted_genome_bam.bam         | Reads aligned to the genome and transcriptome annotated with barcode information                                                                                   |
+| possorted_genome_bam.bam.bai     | Index for possorted_genome_bam.bam                                                                                                                                 |
+| filtered_feature_bc_matrix       | Filtered feature-barcode matrices containing only cellular barcodes in MEX format. (In Targeted Gene Expression samples, the non-targeted genes are not present.)  |
+| filtered_feature_bc_matrix_h5.h5 | Filtered feature-barcode matrices containing only cellular barcodes in HDF5 format. (In Targeted Gene Expression samples, the non-targeted genes are not present.) |
+| raw_feature_bc_matrices          | Unfiltered feature-barcode matrices containing all barcodes in MEX format                                                                                          |
+| raw_feature_bc_matrix_h5.h5      | Unfiltered feature-barcode matrices containing all barcodes in HDF5 format                                                                                         |
+| analysis                         | Secondary analysis data including dimensionality reduction, cell clustering, and differential expression                                                           |
+| molecule_info.h5                 | Molecule-level information used by cellranger aggr to aggregate samples into larger datasets                                                                       |
+| cloupe.cloupe                    | Loupe Browser visualization and analysis file                                                                                                                      |
+| feature_reference.csv            | (Feature Barcode only) Feature Reference CSV file                                                                                                                  |
+| target_panel.csv                 | (Targeted GEX only) Targed panel CSV file                                                                                                                          |
+
+
+
