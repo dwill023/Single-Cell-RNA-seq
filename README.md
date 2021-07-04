@@ -20,7 +20,7 @@ The major difference is each library in a scRNA-seq represents one cell instead 
 
 - library amplication depth: each cell can have differing number of reads between them.
 - Gene 'dropouts': A gene may have a moderate amount reads in one cell but not the other.
-- 
+
 The above can be introduced due to low starting material. A way to mediate this is to have lots of cells. It's difficult to estimate how may different types of cells you have in a sample but there's a [calculator](https://satijalab.org/howmanycells/) that can estimate this based on some assumptions. Based on the [10x literature](https://support.10xgenomics.com/single-cell-gene-expression/library-prep/doc/user-guide-chromium-single-cell-3-reagent-kits-user-guide-v3-chemistry) and reading papers (PMID: 32795399, PMID: 32302522) I would say 5,000 cells per condition per replicate is a good enough for complex samples (20 different cell types).
 
 The **sequencing depth** recommended is a minimum of 20,000 read pairs per cell.  Paired-ended 50 bp reads.
@@ -41,6 +41,6 @@ The [cellranger](https://support.10xgenomics.com/single-cell-gene-expression/sof
 The output of the above is a UMI count matrix. The values in this matrix represent the number of molecules for each feature (i.e. gene; row) that are detected in each cell (column). This file is used with the [Seurat R library](https://satijalab.org/seurat/archive/v3.2/pbmc3k_tutorial.html) to select and filter cells based on QC metrics, data normalization & scaling, and the detection of highly variable features. 
 
 <span style="color:blue">Below are the steps to analyze the data starting with fastq files.</span>.
-
+<font color='red'>test blue color font</font>
 
 
